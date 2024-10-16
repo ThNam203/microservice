@@ -19,7 +19,7 @@ type serviceInstance struct {
 	lastActive time.Time
 }
 
-func NewInMemoryRegistry() *InMemoryRegistry {
+func NewInMemoryRegistry() Registry {
 	return &InMemoryRegistry{
 		serviceAddrs: map[ServiceName]map[InstanceID]*serviceInstance{},
 	}

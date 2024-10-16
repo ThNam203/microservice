@@ -13,7 +13,7 @@ type ConsulRegistry struct {
 	client *consul.Client
 }
 
-func NewConsulRegistry(addr string) (*ConsulRegistry, error) {
+func NewConsulRegistry(addr string) (Registry, error) {
 	cconfig := consul.DefaultConfig()
 	cconfig.Address = addr
 
