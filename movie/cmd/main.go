@@ -5,13 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"sen1or/micromovie/gen"
 	"sen1or/micromovie/movie/internal/controller/movie"
-	metadatagateway "sen1or/micromovie/movie/internal/gateway/metadata/http"
-	ratinggateway "sen1or/micromovie/movie/internal/gateway/rating/http"
-	httphandler "sen1or/micromovie/movie/internal/handler/http"
+	metadatagateway "sen1or/micromovie/movie/internal/gateway/metadata/grpc"
+	ratinggateway "sen1or/micromovie/movie/internal/gateway/rating/grpc"
+	grpchandler "sen1or/micromovie/movie/internal/handler/grpc"
 	"sen1or/micromovie/pkg/discovery"
 	"time"
+
+	"google.golang.org/grpc"
 )
 
 const serviceName = "movie"
@@ -43,13 +47,13 @@ func main() {
 	}()
 	defer registry.Deregister(ctx, serviceName, instanceID)
 
-	metadataGateway := metadatagateway.NewGateway(registry)
-	ratingGateway := ratinggateway.NewGateway(registry)
-
+	metadataGateway := metadatagateway.New(registry)
+	ratingGateway := ratinggateway.New(registry)
 	ctrl := movie.New(ratingGateway, metadataGateway)
-	handler := httphandler.New(*ctrl)
-	http.HandleFunc("/movie", handler.GetMovieDetails)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
-		panic(err)
-	}
+	handler := grpchandler.New(*ctrl)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+	sv := grpc.NewServer()
+	gen.RegisterMovieServiceServer(sv, handler)
+	sv.Serve(lis)
 }

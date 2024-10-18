@@ -3,10 +3,10 @@ package movie
 import (
 	"context"
 	"errors"
-	metadatamodel "sen1or/micromovie/metadata/pkg"
+	metadatamodel "sen1or/micromovie/metadata/pkg/model"
 	"sen1or/micromovie/movie/internal/gateway"
 	model "sen1or/micromovie/movie/pkg"
-	ratingmodel "sen1or/micromovie/rating/pkg"
+	ratingmodel "sen1or/micromovie/rating/pkg/model"
 )
 
 var (

@@ -5,12 +5,16 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"sen1or/micromovie/gen"
 	"sen1or/micromovie/pkg/discovery"
 	"sen1or/micromovie/rating/internal/controller/rating"
-	httphandler "sen1or/micromovie/rating/internal/handler/http"
+	grpcHandler "sen1or/micromovie/rating/internal/handler/grpc"
 	"sen1or/micromovie/rating/internal/repository/memory"
 	"time"
+
+	"google.golang.org/grpc"
 )
 
 const serviceName = "rating"
@@ -46,9 +50,14 @@ func main() {
 
 	repo := memory.NewRepository()
 	ctrl := rating.New(repo)
-	handler := httphandler.New(ctrl)
-	http.HandleFunc("/rating", handler.Handle)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+	handler := grpcHandler.New(ctrl)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+	if err != nil {
 		panic(err)
 	}
+
+	sv := grpc.NewServer()
+	gen.RegisterRatingServiceServer(sv, handler)
+	sv.Serve(lis)
 }

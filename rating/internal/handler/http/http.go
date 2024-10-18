@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"sen1or/micromovie/rating/internal/controller/rating"
-	model "sen1or/micromovie/rating/pkg"
+	model "sen1or/micromovie/rating/pkg/model"
 	"strconv"
 )
 

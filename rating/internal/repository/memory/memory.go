@@ -3,7 +3,7 @@ package memory
 import (
 	"context"
 	"sen1or/micromovie/rating/internal/repository"
-	model "sen1or/micromovie/rating/pkg"
+	model "sen1or/micromovie/rating/pkg/model"
 	"sync"
 )
 
