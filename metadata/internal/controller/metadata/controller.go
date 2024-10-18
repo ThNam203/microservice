@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	repository "sen1or/micromovie/metadata/internal/repository"
-	model "sen1or/micromovie/metadata/pkg"
+	model "sen1or/micromovie/metadata/pkg/model"
 )
 
 var (

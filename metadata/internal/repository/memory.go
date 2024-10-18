@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	model "sen1or/micromovie/metadata/pkg"
+	model "sen1or/micromovie/metadata/pkg/model"
 	"sync"
 )
 

@@ -5,13 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"time"
 
+	"sen1or/micromovie/gen"
 	"sen1or/micromovie/metadata/internal/controller/metadata"
-	httpHandler "sen1or/micromovie/metadata/internal/handler/http"
+	grpcHandler "sen1or/micromovie/metadata/internal/handler/grpc"
 	"sen1or/micromovie/metadata/internal/repository"
 	"sen1or/micromovie/pkg/discovery"
+
+	"google.golang.org/grpc"
 )
 
 const serviceName = "metadata"
@@ -47,10 +51,14 @@ func main() {
 
 	repo := repository.NewRepository()
 	ctrl := metadata.NewController(repo)
-	handler := httpHandler.NewHandler(ctrl)
+	handler := grpcHandler.New(ctrl)
 
-	http.HandleFunc("/metadata", handler.GetMetadata)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
-		log.Printf("error while running metadata server: %s\n", err)
+	sv := grpc.NewServer()
+	gen.RegisterMetadataServiceServer(sv, handler)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+	if err != nil {
+		panic(err)
 	}
+	sv.Serve(lis)
 }
